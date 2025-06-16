@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Новости - SECNet{% endblock %}
+{% block content %}
+    <h1 class="text-3xl font-semibold text-center mb-12">Новости</h1>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {% for news in news_items %}
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-xl font-semibold mb-2">{{ news.title }}</h2>
+                <p class="text-gray-600">{{ news.content|truncatewords:30 }}</p>
+                <p class="text-sm text-gray-500 mt-2">{{ news.created_at|date:"d.m.Y" }}</p>
+            </div>
+        {% empty %}
+            <p class="text-center col-span-2 text-gray-600">Новостей пока нет.</p>
+        {% endfor %}
+    </div>
+{% endblock %}

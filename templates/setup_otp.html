@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}Настройка OTP{% endblock %}
+{% block content %}
+    <h1 class="text-3xl font-semibold text-center mb-12">Настройка двухфакторной аутентификации</h1>
+    <div class="bg-white p-6 rounded-lg shadow-md max-w-md mx-auto">
+        <p class="mb-4">Отсканируйте QR-код в приложении-аутентификаторе (например, Google Authenticator):</p>
+        {% if qr_url %}
+            <img src="{{ qr_url }}" alt="QR Code" class="mx-auto mb-4">
+        {% else %}
+            <p class="text-red-600">Ошибка: QR-код не сгенерирован</p>
+        {% endif %}
+        <form method="post" class="space-y-4">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="bg-blue-600 text-white py-2 px-6 rounded hover:bg-blue-700">Подтвердить</button>
+        </form>
+    </div>
+{% endblock %}

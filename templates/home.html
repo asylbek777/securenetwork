@@ -1,0 +1,126 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <title>Security Network</title>
+    <link rel="stylesheet" href="{% static 'css/output.css' %}">
+    <script src="https://kit.fontawesome.com/YOURKITCODE.js" crossorigin="anonymous"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+    <!-- Навигация -->
+    <nav class="bg-blue-900 text-white shadow-lg">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <a href="{% url 'home' %}" class="text-2xl font-bold">SECNet</a>
+            <ul class="flex space-x-6">
+                <li><a href="{% url 'home' %}" class="hover:text-blue-300">Главная</a></li>
+                <li><a href="{% url 'schedule' %}" class="hover:text-blue-300">Расписание</a></li>
+                <li><a href="{% url 'news' %}" class="hover:text-blue-300">Новости</a></li>
+                {% if profile.is_teacher %}
+                    <li><a href="{% url 'upload_assignment' %}" class="hover:text-blue-300">Загрузить задание</a></li>
+                {% endif %}
+                <li><a href="{% url 'chat' %}" class="hover:text-blue-300">Чат</a></li>
+                <li><a href="{% url 'logout' %}" class="hover:text-blue-300">Выйти</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Герой-секция -->
+    <section class="bg-blue-600 text-white py-20 text-center">
+        <div class="container mx-auto px-4">
+            <h1 class="text-5xl font-bold mb-4">Добро пожаловать в SECNet</h1>
+            <p class="text-xl mb-6">Ваше решение для безопасности</p>
+            <a href="{% url 'register' %}" class="bg-white text-blue-600 py-3 px-6 rounded-full font-semibold hover:bg-gray-200">Начать сейчас</a>
+        </div>
+    </section>
+
+    <!-- Задания -->
+    <section class="py-16">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-semibold text-center mb-12">Последние задания</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {% for assignment in assignments %}
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-xl font-semibold mb-2">
+                            <a href="{% url 'assignment_detail' assignment.id %}" class="text-blue-600 hover:underline">{{ assignment.title }}</a>
+                        </h3>
+                        <p class="text-gray-600">{{ assignment.description|truncatewords:20 }}</p>
+                        <p class="text-sm text-gray-500 mt-2">Категория: {{ assignment.category }}</p>
+                        {% if assignment.file %}
+                            <a href="{{ assignment.file.url }}" class="text-blue-500 hover:underline">Скачать</a>
+                        {% endif %}
+                    </div>
+                {% empty %}
+                    <p class="text-center col-span-2">Заданий пока нет.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Расписание -->
+    <section class="bg-gray-200 py-16">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-semibold text-center mb-12">Ближайшее расписание</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {% for schedule in schedules %}
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-xl font-semibold mb-2">{{ schedule.title }}</h3>
+                        <p class="text-gray-600">{{ schedule.date|date:"d.m.Y H:i" }}</p>
+                        <p class="text-gray-600">{{ schedule.description|truncatewords:20 }}</p>
+                    </div>
+                {% empty %}
+                    <p class="text-center col-span-2">Расписание пусто.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Чат-бот -->
+    <section class="py-16">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-semibold text-center mb-12">Спросите нашего бота</h2>
+            <div class="bg-white p-6 rounded-lg shadow-md max-w-md mx-auto">
+                <div id="chat-messages" class="h-64 overflow-y-auto mb-4 p-4 bg-gray-50 rounded"></div>
+                <form id="chat-form" class="flex space-x-2">
+                    <input type="text" id="user_input" name="user_input" placeholder="Задайте вопрос" class="flex-1 border border-gray-300 p-2 rounded">
+                    <button type="submit" class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700">Отправить</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Призыв к действию -->
+    <section class="py-16 text-center">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-semibold mb-6">Готовы начать?</h2>
+            <a href="{% url 'register' %}" class="bg-blue-600 text-white py-3 px-6 rounded-full font-semibold hover:bg-blue-700">Присоединяйтесь сейчас</a>
+        </div>
+    </section>
+
+    <script>
+        const form = document.getElementById('chat-form');
+        const chatMessages = document.getElementById('chat-messages');
+        const userInput = document.getElementById('user_input');
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const message = userInput.value.trim();
+            if (message) {
+                fetch('{% url "chatbot_api" %}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({ user_input: message })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    chatMessages.innerHTML += `<p class="text-right text-blue-600">${message}</p>`;
+                    chatMessages.innerHTML += `<p class="text-left text-gray-800">${data.bot_response}</p>`;
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                    userInput.value = '';
+                });
+            }
+        });
+    </script>
+</body>
+</html>

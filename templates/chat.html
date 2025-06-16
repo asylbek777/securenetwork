@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}Чат - SECNet{% endblock %}
+{% block content %}
+    <h1 class="text-3xl font-semibold text-center mb-12">Чат</h1>
+    <div class="bg-white p-6 rounded-lg shadow-md max-w-2xl mx-auto">
+        <div class="h-96 overflow-y-auto mb-4 p-4 bg-gray-50 rounded">
+            {% for message in messages %}
+                <p class="{% if message.user == request.user %}text-right text-blue-600{% else %}text-left text-gray-800{% endif %}">
+                    <strong>{{ message.user.username }}:</strong> {{ message.content }} <span class="text-sm text-gray-500">({{ message.timestamp|date:"H:i" }})</span>
+                </p>
+            {% endfor %}
+        </div>
+        <form method="post" class="flex space-x-2">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700">Отправить</button>
+        </form>
+    </div>
+{% endblock %}

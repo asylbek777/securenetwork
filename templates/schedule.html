@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Расписание - SECNet{% endblock %}
+{% block content %}
+    <h1 class="text-3xl font-semibold text-center mb-12">Расписание занятий</h1>
+    
+    {% if not read_only %}
+        <div class="bg-white p-6 rounded-lg shadow-md mb-12 max-w-lg mx-auto">
+            <h2 class="text-2xl font-semibold mb-4">Добавить расписание</h2>
+            <form method="post" class="space-y-4">
+                {% csrf_token %}
+                <div>{{ form.as_p }}</div>
+                <button type="submit" class="bg-blue-600 text-white py-2 px-6 rounded hover:bg-blue-700">Добавить</button>
+            </form>
+        </div>
+    {% endif %}
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {% for schedule in schedules %}
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h3 class="text-xl font-semibold mb-2">{{ schedule.title }}</h3>
+                <p class="text-gray-600">{{ schedule.date|date:"d.m.Y H:i" }}</p>
+                <p class="text-gray-600">{{ schedule.description|truncatewords:20 }}</p>
+            </div>
+        {% empty %}
+            <p class="text-center col-span-2 text-gray-600">Расписание пусто.</p>
+        {% endfor %}
+    </div>
+{% endblock %}

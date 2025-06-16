@@ -1,0 +1,37 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Security Network{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/output.css' %}">
+    <script src="https://kit.fontawesome.com/YOURKITCODE.js" crossorigin="anonymous"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+    <!-- Навигация -->
+    <nav class="bg-blue-900 text-white shadow-lg">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <a href="{% url 'home' %}" class="text-2xl font-bold">SECNet</a>
+            <ul class="flex space-x-6">
+                <li><a href="{% url 'home' %}" class="hover:text-blue-300 {% if request.path == '/home/' %}text-blue-300 font-semibold{% endif %}">Главная</a></li>
+                <li><a href="{% url 'schedule' %}" class="hover:text-blue-300 {% if request.path == '/schedule/' %}text-blue-300 font-semibold{% endif %}">Расписание</a></li>
+                <li><a href="{% url 'news' %}" class="hover:text-blue-300 {% if request.path == '/news/' %}text-blue-300 font-semibold{% endif %}">Новости</a></li>
+                {% if profile.is_teacher %}
+                    <li><a href="{% url 'upload_assignment' %}" class="hover:text-blue-300 {% if request.path == '/upload_assignment/' %}text-blue-300 font-semibold{% endif %}">Загрузить задание</a></li>
+                {% endif %}
+                <li><a href="{% url 'chat' %}" class="hover:text-blue-300 {% if request.path == '/chat/' %}text-blue-300 font-semibold{% endif %}">Чат</a></li>
+                <li><a href="{% url 'logout' %}" class="hover:text-blue-300">Выйти</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Основной контент -->
+    <main class="py-16">
+        <div class="container mx-auto px-4">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </main>
+</body>
+</html>

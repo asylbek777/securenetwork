@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}Вход - EduNetwork{% endblock %}
+{% block content %}
+    <h1 class="text-3xl font-semibold text-center mb-12">Вход</h1>
+    <div class="bg-white p-6 rounded-lg shadow-md max-w-md mx-auto">
+        <form method="post" class="space-y-4">
+            {% csrf_token %}
+            <div>
+                <label for="username" class="block text-gray-700">Имя пользователя:</label>
+                <input type="text" name="username" id="username" class="border border-gray-300 p-2 rounded w-full" required>
+            </div>
+            <div>
+                <label for="password" class="block text-gray-700">Пароль:</label>
+                <input type="password" name="password" id="password" class="border border-gray-300 p-2 rounded w-full" required>
+            </div>
+            {% if error %}
+                <p class="text-red-600 text-center">{{ error }}</p>
+            {% endif %}
+            <button type="submit" class="bg-blue-600 text-white py-2 px-6 rounded hover:bg-blue-700">Войти</button>
+        </form>
+        <p class="mt-4 text-center">Нет аккаунта? <a href="{% url 'register' %}" class="text-blue-600 hover:underline">Зарегистрируйтесь</a></p>
+    </div>
+{% endblock %}
